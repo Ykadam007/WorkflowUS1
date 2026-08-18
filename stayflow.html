@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StayFlow — Book a stay & see how booking systems really work</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{
+  --navy:#0E2A52;
+  --navy-deep:#081A38;
+  --blue:#1B4FA0;
+  --blue-light:#EAF1FC;
+  --amber:#F2A33B;
+  --amber-dark:#D9871C;
+  --green:#1C9A5B;
+  --green-bg:#E8F8EF;
+  --red:#D64545;
+  --red-bg:#FCEAEA;
+  --bg:#F5F6FA;
+  --card:#FFFFFF;
+  --ink:#101828;
+  --ink-soft:#4A5578;
+  --line:#E3E6F0;
+  --radius:14px;
+  --shadow:0 8px 24px rgba(14,42,82,.08);
+  --mono:'JetBrains Mono',monospace;
+  --disp:'Sora',sans-serif;
+  --body:'Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.5;}
+.hidden{display:none !important;}
+img.ph{display:block;width:100%;height:100%;object-fit:cover;}
+button{font-family:inherit;cursor:pointer;border:none;}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+h1,h2,h3,h4{font-family:var(--disp);letter-spacing:-0.01em;}
+
+/* ============ HEADER ============ */
+header.site{background:var(--navy);color:#fff;position:sticky;top:0;z-index:200;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1180px;margin:0 auto;}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:800;font-size:22px;}
+.logo .dot{color:var(--amber);}
+nav.primary{display:flex;gap:26px;font-size:14.5px;font-weight:600;opacity:.92;}
+nav.primary span{cursor:default;padding:4px 0;border-bottom:2px solid transparent;}
+nav.primary span.active{border-bottom-color:var(--amber);}
+.top-right{display:flex;align-items:center;gap:18px;font-size:14px;font-weight:600;}
+.top-right .pill{background:rgba(255,255,255,.12);padding:7px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.18);}
+@media(max-width:900px){nav.primary{display:none;}}
+
+/* ============ HERO / SEARCH ============ */
+.hero{background:linear-gradient(180deg,var(--navy) 0%,var(--navy-deep) 100%);color:#fff;padding:38px 0 90px;}
+.hero h1{font-size:34px;margin-bottom:6px;}
+.hero p.sub{color:#C9D6EE;font-size:15.5px;margin-bottom:26px;}
+.search-box{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:18px;display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr auto;gap:0;color:var(--ink);}
+.search-field{padding:6px 18px;border-right:1px solid var(--line);}
+.search-field:last-of-type{border-right:none;}
+.search-field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);font-weight:700;margin-bottom:4px;}
+.search-field .val{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px;}
+.search-field .val i{color:var(--blue);}
+.search-btn{background:var(--amber);color:#3A2200;font-weight:800;font-size:15px;border-radius:10px;padding:0 30px;display:flex;align-items:center;gap:8px;transition:transform .15s, background .15s;}
+.search-btn:hover{background:var(--amber-dark);transform:translateY(-1px);}
+@media(max-width:900px){.search-box{grid-template-columns:1fr 1fr;}.search-field{border-right:none;border-bottom:1px solid var(--line);}.search-btn{grid-column:1/-1;padding:14px;justify-content:center;margin-top:8px;}}
+
+/* search overlay animation */
+.search-overlay{position:fixed;inset:0;background:rgba(8,26,56,.94);z-index:500;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;}
+.search-overlay .pipeline{display:flex;align-items:center;gap:0;margin-top:26px;flex-wrap:wrap;justify-content:center;max-width:720px;}
+.pl-node{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 16px;font-size:13px;font-weight:600;font-family:var(--mono);display:flex;align-items:center;gap:8px;opacity:.35;transition:all .3s;}
+.pl-node.active{opacity:1;background:rgba(242,163,59,.15);border-color:var(--amber);color:#fff;}
+.pl-node.done{opacity:1;background:rgba(28,154,91,.15);border-color:var(--green);}
+.pl-node.done i{color:var(--green);}
+.pl-node.active i{color:var(--amber);}
+.pl-arrow{color:rgba(255,255,255,.3);padding:0 8px;font-size:13px;}
+.overlay-title{font-family:var(--mono);font-size:14px;color:var(--amber);letter-spacing:.03em;min-height:20px;}
+.spinner{width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:var(--amber);animation:spin .8s linear infinite;margin-bottom:18px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ============ SECTION SHELL ============ */
+section.block{padding:56px 0;}
+.section-head{margin-bottom:26px;}
+.eyebrow{font-family:var(--mono);font-size:12px;color:var(--blue);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.section-head h2{font-size:26px;}
+.section-head p{color:var(--ink-soft);font-size:15px;margin-top:6px;max-width:640px;}
+
+/* ============ RESULTS ============ */
+.results-list{display:flex;flex-direction:column;gap:16px;}
+.hotel-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);display:grid;grid-template-columns:220px 1fr auto;overflow:hidden;}
+.hotel-thumb{background:linear-gradient(135deg,#274B85,#0E2A52);position:relative;}
+.hotel-thumb svg{width:100%;height:100%;}
+.hotel-info{padding:18px 22px;}
+.hotel-info h3{font-size:18px;margin-bottom:4px;}
+.stars{color:var(--amber);font-size:13px;margin-bottom:6px;}
+.loc{color:var(--ink-soft);font-size:13.5px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.tags{display:flex;gap:8px;flex-wrap:wrap;}
+.tag{background:var(--blue-light);color:var(--blue);font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.tag.green{background:var(--green-bg);color:var(--green);}
+.hotel-price{padding:20px 24px;text-align:right;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;border-left:1px solid var(--line);}
+.price-num{font-size:22px;font-weight:800;}
+.price-sub{font-size:12px;color:var(--ink-soft);margin-bottom:14px;}
+.btn{background:var(--blue);color:#fff;font-weight:700;font-size:14px;padding:11px 20px;border-radius:9px;transition:all .15s;}
+.btn:hover{background:#153E7F;transform:translateY(-1px);}
+.btn.amber{background:var(--amber);color:#3A2200;}
+.btn.amber:hover{background:var(--amber-dark);}
+.btn.outline{background:#fff;color:var(--blue);border:1.5px solid var(--blue);}
+.btn.outline:hover{background:var(--blue-light);}
+.btn.green{background:var(--green);}
+.btn.green:hover{background:#157A48;}
+.btn.red{background:var(--red);}
+.btn.small{padding:8px 14px;font-size:13px;}
+@media(max-width:760px){.hotel-card{grid-template-columns:1fr;}.hotel-thumb{height:140px;}.hotel-price{border-left:none;border-top:1px solid var(--line);align-items:flex-start;}}
+
+/* ============ ROOM DETAIL ============ */
+.room-detail{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-columns:1fr 1fr;}
+.room-media{background:linear-gradient(135deg,#2E5A9E,#0E2A52);min-height:280px;}
+.room-media svg{width:100%;height:100%;}
+.room-body{padding:28px 30px;}
+.room-body h3{font-size:22px;margin-bottom:4px;}
+.room-facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 20px;}
+.fact{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink-soft);}
+.fact i{color:var(--blue);width:16px;}
+.price-block{display:flex;align-items:baseline;justify-content:space-between;border-top:1px solid var(--line);padding-top:16px;margin-top:6px;}
+@media(max-width:760px){.room-detail{grid-template-columns:1fr;}.room-media{min-height:180px;}}
+
+/* ============ WORKFLOW ============ */
+.workflow-wrap{background:var(--navy-deep);border-radius:20px;padding:34px;color:#fff;}
+.wf-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px;}
+.wf-title{font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:.05em;text-transform:uppercase;}
+.wf-controls{display:flex;gap:8px;flex-wrap:wrap;}
+.chip-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:12.5px;font-weight:600;padding:8px 13px;border-radius:8px;display:flex;align-items:center;gap:6px;transition:all .15s;}
+.chip-btn:hover{background:rgba(255,255,255,.16);}
+.chip-btn.on{background:var(--amber);color:#3A2200;border-color:var(--amber);}
+
+/* stepper */
+.stepper{display:flex;gap:4px;overflow-x:auto;padding-bottom:10px;margin-bottom:24px;}
+.step-node{flex:1;min-width:118px;text-align:center;position:relative;}
+.step-circle{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:13px;font-weight:700;transition:all .3s;}
+.step-node.active .step-circle{border-color:var(--amber);background:var(--amber);color:#3A2200;}
+.step-node.done .step-circle{border-color:var(--green);background:var(--green);color:#fff;}
+.step-node.error .step-circle{border-color:var(--red);background:var(--red);color:#fff;}
+.step-node .lbl{font-size:10.5px;color:rgba(255,255,255,.55);font-weight:600;text-transform:uppercase;letter-spacing:.03em;}
+.step-node.active .lbl,.step-node.done .lbl{color:#fff;}
+.step-line{position:absolute;top:17px;left:-50%;width:100%;height:2px;background:rgba(255,255,255,.15);z-index:-1;}
+.step-node:first-child .step-line{display:none;}
+.step-node.done .step-line,.step-node.active .step-line{background:var(--green);}
+
+/* split screen */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.panel{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:18px;min-height:180px;}
+.panel h4{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.5);margin-bottom:12px;font-weight:700;}
+.panel h4 i{margin-right:6px;}
+.bubble{background:rgba(255,255,255,.07);border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:14.5px;animation:fadeUp .35s ease;}
+.bubble.sys{font-family:var(--mono);font-size:12.8px;color:#BFD4F5;}
+.bubble .tag-line{color:var(--amber);font-weight:700;font-family:var(--mono);font-size:11.5px;display:block;margin-bottom:4px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@media(max-width:800px){.split{grid-template-columns:1fr;}}
+
+/* explanation card */
+.explain{background:rgba(255,255,255,.05);border-left:3px solid var(--amber);border-radius:10px;padding:16px 18px;margin-bottom:20px;font-size:13.8px;color:#D9E2F5;}
+.explain b{color:var(--ink);}
+
+.explain .qa{margin-bottom:8px;}
+.explain .qa:last-child{margin-bottom:0;}
+.explain .qa span.q{color:var(--amber);font-weight:700;font-family:var(--mono);font-size:11.5px;display:block;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;}
+
+/* db + log grid */
+.dblog{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;margin-bottom:20px;}
+@media(max-width:800px){.dblog{grid-template-columns:1fr;}}
+.db-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px;}
+.db-table th{text-align:left;color:rgba(255,255,255,.45);font-weight:600;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.12);font-size:10.5px;text-transform:uppercase;}
+.db-table td{padding:8px;border-bottom:1px solid rgba(255,255,255,.06);}
+.status-pill{padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;text-transform:uppercase;}
+.status-pill.avail{background:rgba(28,154,91,.2);color:#5FD79A;}
+.status-pill.held{background:rgba(242,163,59,.2);color:var(--amber);}
+.status-pill.booked{background:rgba(214,69,69,.2);color:#F09090;}
+.status-pill.locked{background:rgba(255,255,255,.14);color:#fff;}
+.log-term{background:#050D1E;border-radius:10px;padding:14px;font-family:var(--mono);font-size:12px;height:210px;overflow-y:auto;color:#8FD6A8;}
+.log-line{margin-bottom:5px;opacity:0;animation:fadeUp .3s forwards;}
+.log-time{color:#5C7BA8;margin-right:8px;}
+.log-line.err{color:#F09090;}
+.log-line.warn{color:var(--amber);}
+
+/* hold countdown */
+.hold-banner{display:flex;align-items:center;justify-content:space-between;background:rgba(242,163,59,.12);border:1px solid rgba(242,163,59,.35);border-radius:12px;padding:14px 18px;margin-bottom:20px;}
+.hold-timer{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--amber);}
+
+/* code panel */
+.code-panel{background:#050D1E;border-radius:12px;padding:18px 20px;font-family:var(--mono);font-size:12.6px;color:#C7D6EF;overflow-x:auto;line-height:1.65;}
+.code-panel .kw{color:#F2A33B;}
+.code-panel .fn{color:#7FB8F5;}
+.code-panel .cm{color:#5C7BA8;}
+.code-panel .str{color:#8FD6A8;}
+
+/* result banner */
+.result-banner{border-radius:12px;padding:20px 24px;text-align:center;margin-top:6px;}
+.result-banner.ok{background:rgba(28,154,91,.14);border:1px solid rgba(28,154,91,.4);}
+.result-banner.fail{background:rgba(214,69,69,.14);border:1px solid rgba(214,69,69,.4);}
+.result-banner .code{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px;}
+.result-banner h4{font-size:18px;margin-bottom:4px;}
+.result-banner p{font-size:13.5px;color:rgba(255,255,255,.7);}
+
+/* ============ WHITE CARD SECTIONS ============ */
+.card-block{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px;}
+
+/* concurrency lanes */
+.lanes{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+.lane{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;transition:all .3s;}
+.lane .who{font-weight:700;font-size:14px;margin-bottom:8px;}
+.lane .arrow-track{height:36px;position:relative;margin-bottom:8px;}
+.lane .arrow-track i{position:absolute;left:0;top:8px;font-size:16px;color:var(--ink-soft);transition:left 1s ease;}
+.lane .result{font-size:12px;font-weight:700;padding:6px;border-radius:8px;background:#EEF0F6;color:var(--ink-soft);}
+.lane .result.win{background:var(--green-bg);color:var(--green);}
+.lane .result.lose{background:var(--red-bg);color:var(--red);}
+@media(max-width:800px){.lanes{grid-template-columns:1fr 1fr;}}
+
+.inv-strip{display:flex;gap:10px;margin:18px 0;flex-wrap:wrap;}
+.inv-room{flex:1;min-width:100px;border:1.5px solid var(--line);border-radius:10px;padding:12px;text-align:center;transition:all .4s;}
+.inv-room .rn{font-weight:800;font-size:15px;}
+.inv-room .rs{font-size:10.5px;font-weight:700;text-transform:uppercase;margin-top:4px;letter-spacing:.03em;}
+.inv-room.avail{border-color:var(--green);background:var(--green-bg);}
+.inv-room.avail .rs{color:var(--green);}
+.inv-room.locked{border-color:var(--navy);background:var(--navy);color:#fff;}
+.inv-room.locked .rs{color:var(--amber);}
+.inv-room.booked{border-color:var(--ink-soft);background:#EEF0F6;color:var(--ink-soft);}
+
+.toggle-row{display:flex;align-items:center;gap:12px;margin:20px 0;}
+.switch{width:46px;height:26px;background:var(--line);border-radius:20px;position:relative;transition:all .2s;}
+.switch::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;left:3px;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+.switch.on{background:var(--red);}
+.switch.on::after{left:23px;}
+
+/* error grid */
+.err-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:22px;}
+.err-btn{background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 14px;text-align:left;font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:10px;transition:all .15s;}
+.err-btn:hover{border-color:var(--red);color:var(--red);}
+.err-btn i{color:var(--red);}
+.err-detail{background:var(--navy-deep);color:#fff;border-radius:12px;padding:22px;display:none;}
+.err-detail.show{display:block;}
+.err-flow{font-family:var(--mono);font-size:13.5px;line-height:2.1;color:#D9E2F5;}
+.err-flow .fin{color:#F09090;font-weight:700;}
+
+/* state machine */
+.sm-wrap{display:flex;align-items:center;flex-wrap:wrap;gap:0;justify-content:center;margin-bottom:18px;}
+.sm-node{background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:12px 18px;font-weight:700;font-size:13px;text-align:center;min-width:120px;transition:all .15s;}
+.sm-node:hover{border-color:var(--blue);color:var(--blue);}
+.sm-node.on{border-color:var(--green);background:var(--green-bg);color:var(--green);}
+.sm-arrow{color:var(--ink-soft);padding:0 10px;font-size:16px;}
+.sm-fail{font-size:11.5px;color:var(--red);text-align:center;margin-top:6px;font-weight:700;}
+.sm-branch{display:flex;flex-direction:column;align-items:center;}
+.sm-detail{background:var(--bg);border-radius:10px;padding:16px;font-size:13.5px;color:var(--ink-soft);border-left:3px solid var(--blue);}
+
+/* architecture */
+.arch-list{display:flex;flex-direction:column;align-items:center;gap:0;}
+.arch-node{width:100%;max-width:460px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:13px 18px;font-weight:700;font-size:14px;display:flex;align-items:center;gap:10px;transition:all .15s;}
+.arch-node:hover{border-color:var(--blue);box-shadow:var(--shadow);}
+.arch-node i{color:var(--blue);width:18px;}
+.arch-arrow{color:var(--ink-soft);padding:6px 0;font-size:15px;}
+.arch-detail{background:var(--blue-light);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--navy);max-width:460px;width:100%;margin:-2px 0 8px;display:none;}
+.arch-detail.show{display:block;}
+
+footer.site{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:34px 0;text-align:center;font-size:13px;margin-top:40px;}
+
+/* takeaway */
+.takeaway{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;border-radius:20px;padding:36px;}
+.takeaway h2{font-size:24px;margin-bottom:6px;}
+.takeaway .lead{color:var(--amber);font-family:var(--mono);font-size:14px;margin-bottom:18px;}
+.takeaway ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px 22px;margin:14px 0 20px;}
+.takeaway li{font-size:14px;color:#D9E2F5;display:flex;align-items:center;gap:8px;}
+.takeaway li i{color:var(--green);}
+.takeaway .final{font-size:15.5px;font-weight:700;border-top:1px solid rgba(255,255,255,.15);padding-top:16px;}
+@media(max-width:700px){.takeaway ul{grid-template-columns:1fr;}}
+
+.demo-cta{position:fixed;bottom:22px;right:22px;z-index:150;box-shadow:0 10px 30px rgba(14,42,82,.35);}
+.demo-cta button{background:var(--amber);color:#3A2200;font-weight:800;padding:14px 22px;border-radius:30px;font-size:14.5px;display:flex;align-items:center;gap:8px;}
+.demo-cta button:hover{background:var(--amber-dark);}
+@media(max-width:700px){.demo-cta{right:12px;bottom:12px;}.demo-cta button span{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="site">
+  <div class="topbar">
+    <div class="logo"><i class="fa-solid fa-route"></i> StayFlow<span class="dot">.</span></div>
+    <nav class="primary">
+      <span class="active">Stays</span><span>Flights</span><span>Flight + Hotel</span><span>Car Rentals</span><span>Attractions</span>
+    </nav>
+    <div class="top-right">
+      <span class="pill">INR ₹</span>
+      <span>Help</span>
+      <span>List your property</span>
+      <span class="pill">Sign in</span>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO / SEARCH ================= -->
+<div class="hero">
+  <div class="wrap">
+    <h1>Find your next stay</h1>
+    <p class="sub">Search hotels, resorts and homes — and watch exactly how the booking engine handles every request.</p>
+    <div class="search-box">
+      <div class="search-field">
+        <label>Destination</label>
+        <div class="val"><i class="fa-solid fa-location-dot"></i> Goa, India</div>
+      </div>
+      <div class="search-field">
+        <label>Check-in</label>
+        <div class="val"><i class="fa-regular fa-calendar"></i> 20 Aug 2026</div>
+      </div>
+      <div class="search-field">
+        <label>Check-out</label>
+        <div class="val"><i class="fa-regular fa-calendar"></i> 22 Aug 2026</div>
+      </div>
+      <div class="search-field">
+        <label>Guests & Rooms</label>
+        <div class="val"><i class="fa-solid fa-user"></i> 2 Adults · 1 Room</div>
+      </div>
+      <button class="search-btn" id="btnSearch"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+    </div>
+  </div>
+</div>
+
+<!-- search overlay -->
+<div class="search-overlay hidden" id="searchOverlay">
+  <div class="spinner"></div>
+  <div class="overlay-title" id="ovTitle">Sending search request…</div>
+  <div class="pipeline" id="ovPipeline"></div>
+</div>
+
+<div class="wrap">
+
+  <!-- ================= RESULTS ================= -->
+  <section class="block hidden" id="resultsSection">
+    <div class="section-head">
+      <div class="eyebrow">3 properties found · Goa, India · 20–22 Aug</div>
+      <h2>Available stays</h2>
+    </div>
+    <div class="results-list" id="resultsList"></div>
+  </section>
+
+  <!-- ================= ROOM DETAIL ================= -->
+  <section class="block hidden" id="roomSection">
+    <div class="section-head">
+      <div class="eyebrow">Room details</div>
+      <h2 id="roomHotelName">Goa Beach Resort</h2>
+    </div>
+    <div class="room-detail">
+      <div class="room-media">
+        <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+          <rect width="400" height="300" fill="#0E2A52"/>
+          <circle cx="330" cy="60" r="34" fill="#F2A33B" opacity="0.85"/>
+          <path d="M0 220 L80 150 L150 210 L230 130 L320 200 L400 160 L400 300 L0 300 Z" fill="#153E7F"/>
+          <path d="M0 250 L100 200 L200 250 L300 190 L400 240 L400 300 L0 300 Z" fill="#0B274F"/>
+        </svg>
+      </div>
+      <div class="room-body">
+        <h3>Deluxe King Room</h3>
+        <div class="stars">★★★★★ <span style="color:var(--ink-soft);font-weight:400;">Calangute, Goa</span></div>
+        <div class="room-facts">
+          <div class="fact"><i class="fa-solid fa-user-group"></i> 2 Guests</div>
+          <div class="fact"><i class="fa-solid fa-bed"></i> 1 King bed</div>
+          <div class="fact"><i class="fa-solid fa-mug-hot"></i> Breakfast included</div>
+          <div class="fact"><i class="fa-solid fa-rotate-left"></i> Free cancellation</div>
+        </div>
+        <div class="price-block">
+          <div>
+            <div style="font-size:12px;color:var(--ink-soft);">₹3,000 / night · 2 nights</div>
+            <div style="font-size:24px;font-weight:800;">₹6,000 <span style="font-size:12px;font-weight:500;color:var(--ink-soft);">total</span></div>
+          </div>
+          <button class="btn amber" id="btnReserve">Reserve <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MAIN WORKFLOW ================= -->
+  <section class="block hidden" id="workflowSection">
+    <div class="section-head">
+      <div class="eyebrow">Behind the scenes</div>
+      <h2>Booking request in progress</h2>
+      <p>Everything the customer sees on the left is driven by real backend operations on the right. Follow the stepper to see each stage of a production-grade booking pipeline.</p>
+    </div>
+
+    <div class="workflow-wrap">
+      <div class="wf-header">
+        <div class="wf-title"><i class="fa-solid fa-diagram-project"></i> StayFlow booking engine — live simulation</div>
+        <div class="wf-controls">
+          <button class="chip-btn" id="btnRunWorkflow"><i class="fa-solid fa-play"></i> Run complete workflow</button>
+          <button class="chip-btn" id="btnResetWorkflow"><i class="fa-solid fa-rotate-right"></i> Reset</button>
+          <button class="chip-btn" id="btnFailPayment"><i class="fa-solid fa-triangle-exclamation"></i> Simulate payment failure</button>
+          <button class="chip-btn" id="btnDupPayment"><i class="fa-solid fa-copy"></i> Simulate duplicate payment</button>
+        </div>
+      </div>
+
+      <div class="stepper" id="stepper"></div>
+
+      <div class="explain" id="explainBox">
+        <div class="qa"><span class="q">What is happening?</span> Click "Run complete workflow" to start the booking simulation.</div>
+      </div>
+
+      <div class="split">
+        <div class="panel">
+          <h4><i class="fa-solid fa-user"></i> What the customer sees</h4>
+          <div id="customerFeed"></div>
+        </div>
+        <div class="panel">
+          <h4><i class="fa-solid fa-server"></i> What the system is doing</h4>
+          <div id="systemFeed"></div>
+        </div>
+      </div>
+
+      <div class="hold-banner hidden" id="holdBanner">
+        <div><i class="fa-solid fa-lock" style="color:var(--amber);margin-right:8px;"></i> Room 101 is held while you complete payment</div>
+        <div class="hold-timer" id="holdTimer">09:59</div>
+      </div>
+
+      <div class="dblog">
+        <div class="panel">
+          <h4><i class="fa-solid fa-database"></i> RoomInventory (PostgreSQL)</h4>
+          <table class="db-table">
+            <thead><tr><th>Room</th><th>Total</th><th>Available</th><th>Held</th><th>Booked</th><th>Status</th></tr></thead>
+            <tbody id="invBody"></tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <h4><i class="fa-solid fa-terminal"></i> Live system log</h4>
+          <div class="log-term" id="logTerm"></div>
+        </div>
+      </div>
+
+      <div id="resultBanner"></div>
+    </div>
+  </section>
+
+  <!-- ================= PAYMENT WEBHOOK EXPLAINER ================= -->
+  <section class="block hidden" id="webhookSection">
+    <div class="card-block">
+      <div class="section-head">
+        <div class="eyebrow">Payment verification</div>
+        <h2>Why the backend trusts the webhook, not the browser</h2>
+        <p>The browser confirms "payment succeeded" instantly, but that message can be spoofed, dropped, or replayed. StayFlow's backend only confirms a booking after the payment gateway independently calls back and the signature checks out.</p>
+      </div>
+      <div class="code-panel" id="webhookCode"></div>
+    </div>
+  </section>
+
+  <!-- ================= CONCURRENCY LAB ================= -->
+  <section class="block" id="concurrencySection">
+    <div class="section-head">
+      <div class="eyebrow">The core problem</div>
+      <h2>What if 4 customers book at the same time?</h2>
+      <p>Only 3 rooms are left. Four customers hit "Reserve" within the same second. Run the simulation to see how the database decides who gets a room — and what breaks if it isn't done correctly.</p>
+    </div>
+    <div class="card-block">
+      <div class="toggle-row">
+        <div class="switch" id="raceSwitch"></div>
+        <div>
+          <b id="raceLabel">Correct implementation — transaction + row lock</b>
+          <div style="font-size:12.5px;color:var(--ink-soft);">Toggle to see the broken version without locking</div>
+        </div>
+      </div>
+
+      <div class="lanes" id="lanes"></div>
+
+      <div class="inv-strip" id="concInv"></div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;">
+        <button class="btn" id="btnRunConcurrency"><i class="fa-solid fa-bolt"></i> Simulate 4 concurrent bookings</button>
+      </div>
+
+      <div class="explain" style="background:var(--bg);border-left-color:var(--blue);color:var(--ink-soft);" id="raceExplain">
+        <div class="qa"><span class="q" style="color:var(--blue);">What happens next</span> Press the button above to run the simulation.</div>
+      </div>
+
+      <h4 style="margin:26px 0 10px;font-size:15px;">Python / Django — the fix</h4>
+      <div class="code-panel">
+<span class="kw">with</span> transaction.<span class="fn">atomic</span>():
+    room = RoomInventory.objects.<span class="fn">select_for_update</span>().<span class="fn">get</span>(
+        hotel_id=hotel_id,
+        room_type=room_type
+    )
+
+    <span class="cm"># row is now locked until this block commits or rolls back</span>
+    <span class="kw">if</span> room.available_rooms <= 0:
+        <span class="kw">raise</span> RoomUnavailable()
+
+    room.available_rooms -= 1
+    room.held_rooms += 1
+    room.<span class="fn">save</span>()
+      </div>
+      <p style="font-size:13px;color:var(--ink-soft);margin-top:10px;"><b>transaction.atomic()</b> — the booking operations succeed together or roll back together. <b>select_for_update()</b> — locks the matching inventory row so no other request can read or modify it until this transaction finishes.</p>
+    </div>
+  </section>
+
+  <!-- ================= ERROR SCENARIOS ================= -->
+  <section class="block" id="errorSection">
+    <div class="section-head">
+      <div class="eyebrow">Failure handling</div>
+      <h2>How StayFlow handles things going wrong</h2>
+      <p>A reliable booking system spends most of its logic on the unhappy paths. Click a scenario to trace it end to end.</p>
+    </div>
+    <div class="card-block">
+      <div class="err-grid" id="errGrid"></div>
+      <div class="err-detail" id="errDetail"></div>
+    </div>
+  </section>
+
+  <!-- ================= STATE MACHINE ================= -->
+  <section class="block" id="stateSection">
+    <div class="section-head">
+      <div class="eyebrow">Booking lifecycle</div>
+      <h2>Booking state machine</h2>
+      <p>Every booking moves through a strict sequence of states. Click a state to see what it means.</p>
+    </div>
+    <div class="card-block">
+      <div class="sm-wrap" id="smWrap"></div>
+      <div class="sm-detail" id="smDetail">Click any state above to see its explanation.</div>
+    </div>
+  </section>
+
+  <!-- ================= ARCHITECTURE ================= -->
+  <section class="block" id="archSection">
+    <div class="section-head">
+      <div class="eyebrow">System design</div>
+      <h2>End-to-end architecture</h2>
+      <p>Click a component to see its responsibility in the pipeline.</p>
+    </div>
+    <div class="card-block">
+      <div class="arch-list" id="archList"></div>
+    </div>
+  </section>
+
+  <!-- ================= TAKEAWAY ================= -->
+  <section class="block" id="takeawaySection">
+    <div class="takeaway">
+      <div class="lead">KEY TAKEAWAY</div>
+      <h2>A booking system is not just Search → Pay → Confirm</h2>
+      <p style="color:#C9D6EE;font-size:14.5px;max-width:640px;margin-bottom:10px;">A reliable implementation has to account for change and contention at every step:</p>
+      <ul>
+        <li><i class="fa-solid fa-check"></i> Availability changing between search and reserve</li>
+        <li><i class="fa-solid fa-check"></i> Concurrent bookings for the same room</li>
+        <li><i class="fa-solid fa-check"></i> Database transactions & row locking</li>
+        <li><i class="fa-solid fa-check"></i> Temporary holds with expiry</li>
+        <li><i class="fa-solid fa-check"></i> Payment verification via webhook</li>
+        <li><i class="fa-solid fa-check"></i> Idempotency for duplicate requests</li>
+        <li><i class="fa-solid fa-check"></i> Rollbacks that restore inventory</li>
+        <li><i class="fa-solid fa-check"></i> Confirmation & notification delivery</li>
+      </ul>
+      <div class="final">Inventory must stay correct even when thousands of people try to book the same room at once.</div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="site">StayFlow — a technical demonstration project. Not a real booking platform. Payment flows shown are simulated.</footer>
+
+<div class="demo-cta"><button id="btnGuidedDemo"><i class="fa-solid fa-wand-magic-sparkles"></i> <span>Guided demo</span></button></div>
+
+<script>
+/* ========================================================================
+   UTILITIES
+   ======================================================================== */
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstChild; }
+function show(id){ document.getElementById(id).classList.remove('hidden'); }
+function hide(id){ document.getElementById(id).classList.add('hidden'); }
+
+/* ========================================================================
+   1. SEARCH ANIMATION
+   ======================================================================== */
+const searchStages = [
+  {icon:'fa-arrow-up-from-bracket', label:'GET /api/stays/search'},
+  {icon:'fa-server', label:'SearchStayView'},
+  {icon:'fa-shield-check', label:'Validate params'},
+  {icon:'fa-database', label:'Query availability'},
+  {icon:'fa-circle-check', label:'3 rooms found'},
+];
+document.getElementById('btnSearch').addEventListener('click', runSearch);
+
+async function runSearch(){
+  const overlay = document.getElementById('searchOverlay');
+  const pipeline = document.getElementById('ovPipeline');
+  const title = document.getElementById('ovTitle');
+  pipeline.innerHTML = '';
+  searchStages.forEach((s,i)=>{
+    pipeline.appendChild(el(`<div class="pl-node" id="sn${i}"><i class="fa-solid ${s.icon}"></i> ${s.label}</div>`));
+    if(i < searchStages.length-1) pipeline.appendChild(el(`<span class="pl-arrow"><i class="fa-solid fa-chevron-right"></i></span>`));
+  });
+  overlay.classList.remove('hidden');
+  const titles = ['Sending search request…','Backend receiving request…','Validating destination, dates & guests…','Querying room inventory…','Assembling results…'];
+  for(let i=0;i<searchStages.length;i++){
+    title.textContent = titles[i];
+    document.getElementById('sn'+i).classList.add('active');
+    await sleep(650);
+    document.getElementById('sn'+i).classList.remove('active');
+    document.getElementById('sn'+i).classList.add('done');
+  }
+  await sleep(400);
+  overlay.classList.add('hidden');
+  renderResults();
+  show('resultsSection');
+  document.getElementById('resultsSection').scrollIntoView({behavior:'smooth'});
+}
+
+/* ========================================================================
+   2. RESULTS
+   ======================================================================== */
+const HOTELS = [
+  {name:'Goa Beach Resort', loc:'Calangute, Goa', price:6000, room:'Deluxe King Room'},
+  {name:'Palm Grove Suites', loc:'Baga, Goa', price:7400, room:'Sea View Suite'},
+  {name:'Sunset Sands Villa', loc:'Anjuna, Goa', price:5200, room:'Garden Cottage'},
+];
+function renderResults(){
+  const list = document.getElementById('resultsList');
+  list.innerHTML = '';
+  HOTELS.forEach((h,i)=>{
+    list.appendChild(el(`
+      <div class="hotel-card">
+        <div class="hotel-thumb"><svg viewBox="0 0 220 160" preserveAspectRatio="xMidYMid slice">
+          <rect width="220" height="160" fill="#0E2A52"/>
+          <circle cx="180" cy="34" r="18" fill="#F2A33B" opacity=".85"/>
+          <path d="M0 120 L50 90 L90 118 L140 78 L220 110 L220 160 L0 160 Z" fill="#1B4FA0"/>
+        </svg></div>
+        <div class="hotel-info">
+          <h3>${h.name}</h3>
+          <div class="stars">★★★★★</div>
+          <div class="loc"><i class="fa-solid fa-location-dot"></i> ${h.loc}</div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:8px;">${h.room} · 2 Guests</div>
+          <div class="tags"><span class="tag green">Free cancellation</span><span class="tag">Breakfast included</span></div>
+        </div>
+        <div class="hotel-price">
+          <div class="price-num">₹${h.price.toLocaleString('en-IN')}</div>
+          <div class="price-sub">2 nights, taxes incl.</div>
+          <button class="btn select-room" data-i="${i}">Select room</button>
+        </div>
+      </div>
+    `));
+  });
+  list.querySelectorAll('.select-room').forEach(b=>b.addEventListener('click', e=>{
+    selectHotel(HOTELS[+e.currentTarget.dataset.i]);
+  }));
+}
+
+/* ========================================================================
+   3. ROOM DETAIL
+   ======================================================================== */
+let currentHotel = HOTELS[0];
+function selectHotel(h){
+  currentHotel = h;
+  document.getElementById('roomHotelName').textContent = h.name;
+  document.querySelector('#roomSection h3').textContent = h.room;
+  show('roomSection');
+  document.getElementById('roomSection').scrollIntoView({behavior:'smooth'});
+}
+document.getElementById('btnReserve').addEventListener('click', ()=>{
+  show('workflowSection');
+  show('webhookSection');
+  document.getElementById('workflowSection').scrollIntoView({behavior:'smooth'});
+  resetWorkflow();
+});
+
+/* ========================================================================
+   4. MAIN BOOKING WORKFLOW
+   ======================================================================== */
+const STEPS = ['Search','Validate','Availability','Re-check','Hold','Payment','Confirm','Notify'];
+const explanations = [
+  {what:'The customer already searched — this stage recaps what was requested.', why:'Gives the pipeline a starting point: dates, guests, room type.', wrong:'—', handle:'—'},
+  {what:'The backend checks the request shape before touching the database.', why:'Cheap checks (dates, counts) should fail fast, before any expensive DB work.', wrong:'Malformed or nonsensical requests could reach the database.', handle:'Return 400 Bad Request immediately with a clear reason.'},
+  {what:'The backend reads current room inventory for the requested dates.', why:'To show the customer whether a room can be offered at all.', wrong:'This is only a snapshot — it can go stale within seconds.', handle:'Treat it as informational only; always re-check before confirming.'},
+  {what:'Immediately before creating the booking, availability is checked again.', why:'Seconds may have passed since search — another customer may have booked.', wrong:'The room may no longer be available.', handle:'If unavailable, stop and return 409 Conflict.'},
+  {what:'The room is locked and marked HELD for this customer only.', why:'Payment takes time; the room must not be sold twice while it is being paid for.', wrong:'Two customers could pay for the same room.', handle:'A database row lock + hold expiry guarantees exclusivity.'},
+  {what:'A payment request is created and sent to the payment gateway.', why:'The customer needs to actually pay before a room is guaranteed.', wrong:'Payment could fail, time out, or be duplicated.', handle:'Backend waits for a verified webhook, not just the browser response.'},
+  {what:'Once payment is verified, the booking is committed as CONFIRMED.', why:'This is the point of no return — inventory is permanently decremented.', wrong:'A crash mid-commit could leave inconsistent state.', handle:'Wrapped in a single database transaction — all or nothing.'},
+  {what:'A confirmation email/SMS and booking ID are sent to the customer.', why:'The customer needs proof of the booking outside the website.', wrong:'Notification delivery could fail silently.', handle:'Queued and retried independently of the booking transaction.'},
+];
+let holdInterval = null;
+
+function renderStepper(){
+  const s = document.getElementById('stepper');
+  s.innerHTML = STEPS.map((label,i)=>`
+    <div class="step-node" id="step${i}">
+      <div class="step-line"></div>
+      <div class="step-circle">${i+1}</div>
+      <div class="lbl">${label}</div>
+    </div>`).join('');
+}
+renderStepper();
+
+function setStep(i, state){
+  const node = document.getElementById('step'+i);
+  node.classList.remove('active','done','error');
+  node.classList.add(state);
+}
+function setExplain(i){
+  const e = explanations[i];
+  document.getElementById('explainBox').innerHTML = `
+    <div class="qa"><span class="q">What is happening?</span> ${e.what}</div>
+    <div class="qa"><span class="q">Why is it needed?</span> ${e.why}</div>
+    <div class="qa"><span class="q">What can go wrong?</span> ${e.wrong}</div>
+    <div class="qa"><span class="q">How is it handled?</span> ${e.handle}</div>`;
+}
+function addBubble(feedId, text, sys=false, tagLine=''){
+  const feed = document.getElementById(feedId);
+  feed.appendChild(el(`<div class="bubble ${sys?'sys':''}">${tagLine?`<span class="tag-line">${tagLine}</span>`:''}${text}</div>`));
+  feed.scrollTop = feed.scrollHeight;
+}
+let logSeq = 0;
+function log(text, cls=''){
+  const term = document.getElementById('logTerm');
+  const t = new Date(); const time = t.toLocaleTimeString('en-GB');
+  term.appendChild(el(`<div class="log-line ${cls}" style="animation-delay:0s;"><span class="log-time">${time}</span>${text}</div>`));
+  term.scrollTop = term.scrollHeight;
+}
+function renderInventory(state){
+  document.getElementById('invBody').innerHTML = `
+    <tr><td>101</td><td>3</td><td>${state.available}</td><td>${state.held}</td><td>${state.booked}</td>
+    <td><span class="status-pill ${state.pill}">${state.label}</span></td></tr>`;
+}
+function resetWorkflow(){
+  STEPS.forEach((_,i)=>{ const n=document.getElementById('step'+i); n.classList.remove('active','done','error'); });
+  document.getElementById('customerFeed').innerHTML='';
+  document.getElementById('systemFeed').innerHTML='';
+  document.getElementById('logTerm').innerHTML='';
+  document.getElementById('resultBanner').innerHTML='';
+  hide('holdBanner');
+  if(holdInterval) clearInterval(holdInterval);
+  document.getElementById('explainBox').innerHTML = `<div class="qa"><span class="q">What is happening?</span> Click "Run complete workflow" to start the booking simulation.</div>`;
+  renderInventory({available:3, held:0, booked:0, pill:'avail', label:'Available'});
+}
+resetWorkflow();
+
+async function runWorkflow(opts={}){
+  resetWorkflow();
+  const failPayment = opts.failPayment;
+  const duplicate = opts.duplicate;
+
+  // Step 0: Search recap
+  setStep(0,'active'); setExplain(0);
+  addBubble('customerFeed', `Clicks <b>"Reserve"</b> for ${currentHotel.room}`, false, 'CUSTOMER');
+  addBubble('systemFeed', `POST /api/bookings`, true, 'FRONTEND → API');
+  log('POST /api/bookings');
+  await sleep(700); setStep(0,'done');
+
+  // Step 1: Validate
+  setStep(1,'active'); setExplain(1);
+  addBubble('customerFeed', `"Checking your request…"`);
+  addBubble('systemFeed', 'Validating: dates ✓ guests ✓ room_type ✓ hotel_id ✓', true, 'DJANGO · BookingSerializer');
+  log('Validating booking request…');
+  await sleep(700);
+  log('Validation passed', '');
+  setStep(1,'done');
+
+  // Step 2: Availability (snapshot)
+  setStep(2,'active'); setExplain(2);
+  addBubble('customerFeed', `"Room looked available a moment ago…"`);
+  addBubble('systemFeed', 'SELECT available_rooms FROM RoomInventory', true, 'POSTGRESQL');
+  log('Reading inventory snapshot…');
+  await sleep(700); setStep(2,'done');
+
+  // Step 3: Re-check
+  setStep(3,'active'); setExplain(3);
+  addBubble('customerFeed', `"Re-checking latest availability…"`);
+  addBubble('systemFeed', 'SELECT ... FOR UPDATE (lock row)', true, 'POSTGRESQL · TRANSACTION');
+  log('BEGIN TRANSACTION');
+  log('Room inventory row locked', 'warn');
+  await sleep(800);
+  log('available_rooms = 3 → OK');
+  setStep(3,'done');
+
+  // Step 4: Hold
+  setStep(4,'active'); setExplain(4);
+  addBubble('customerFeed', `"Securing your room…" Room 101 <b>HELD</b>`);
+  addBubble('systemFeed', 'available_rooms -=1, held_rooms +=1, COMMIT', true, 'DJANGO · transaction.atomic()');
+  log('Room 101 held for 10:00');
+  renderInventory({available:2, held:1, booked:0, pill:'held', label:'Held'});
+  show('holdBanner');
+  await runHoldTimer(6);
+  setStep(4,'done');
+
+  if(duplicate){
+    await runDuplicatePayment();
+    return;
+  }
+
+  // Step 5: Payment
+  setStep(5,'active'); setExplain(5);
+  addBubble('customerFeed', `Redirected to payment: <b>Pay ₹${currentHotel.price.toLocaleString('en-IN')}</b>`);
+  addBubble('systemFeed', 'POST /api/payment/create → gateway', true, 'PAYMENT SERVICE (simulated)');
+  log('Payment initiated (simulated gateway)');
+  await sleep(900);
+
+  if(failPayment){
+    log('Payment gateway responded: DECLINED', 'err');
+    addBubble('customerFeed', `"Payment failed — please try again."`);
+    addBubble('systemFeed', 'Webhook: status=FAILED → release hold, rollback', true, 'WEBHOOK HANDLER');
+    setStep(5,'error');
+    log('CANCEL HOLD → restoring inventory', 'warn');
+    renderInventory({available:3, held:0, booked:0, pill:'avail', label:'Available'});
+    hide('holdBanner');
+    document.getElementById('resultBanner').innerHTML = `
+      <div class="result-banner fail">
+        <div class="code">HTTP 402 · PAYMENT_FAILED</div>
+        <h4>Payment could not be completed</h4>
+        <p>Your room hold has been released and the room is available again for other customers.</p>
+      </div>`;
+    return;
+  }
+
+  log('Payment gateway responded: SUCCESS');
+  addBubble('customerFeed', `"Payment successful ✓"`);
+  addBubble('systemFeed', 'Webhook verifies signature + amount + txn ID', true, 'POST /api/payment/webhook');
+  log('Webhook received — signature verified');
+  setStep(5,'done');
+
+  // Step 6: Confirm
+  setStep(6,'active'); setExplain(6);
+  addBubble('systemFeed', 'held_rooms -=1, booked_rooms +=1, COMMIT', true, 'DJANGO · confirm_booking()');
+  log('Booking committed to database');
+  renderInventory({available:2, held:0, booked:1, pill:'booked', label:'Booked'});
+  hide('holdBanner');
+  const bookingId = 'STF-2026-0818-001';
+  addBubble('customerFeed', `Booking confirmed! ID <b>${bookingId}</b>`);
+  await sleep(700); setStep(6,'done');
+
+  // Step 7: Notify
+  setStep(7,'active'); setExplain(7);
+  addBubble('systemFeed', 'Queued email + SMS notification job', true, 'NOTIFICATION SERVICE');
+  log('Confirmation email queued');
+  await sleep(700);
+  log('Notification sent ✓');
+  setStep(7,'done');
+
+  document.getElementById('resultBanner').innerHTML = `
+    <div class="result-banner ok">
+      <div class="code">HTTP 201 · CONFIRMED</div>
+      <h4>Booking Confirmed — ${bookingId}</h4>
+      <p>${currentHotel.name} · ${currentHotel.room} · 20–22 Aug 2026 · ₹${currentHotel.price.toLocaleString('en-IN')} paid</p>
+    </div>`;
+}
+
+async function runHoldTimer(seconds){
+  return new Promise(resolve=>{
+    let remaining = seconds;
+    const timerEl = document.getElementById('holdTimer');
+    holdInterval = setInterval(()=>{
+      remaining--;
+      const m = String(Math.floor(remaining/60)).padStart(2,'0');
+      const s = String(remaining%60).padStart(2,'0');
+      timerEl.textContent = `0${m}:${s}`;
+      if(remaining<=0){ clearInterval(holdInterval); resolve(); }
+    },160);
+  });
+}
+
+async function runDuplicatePayment(){
+  setStep(5,'active'); setExplain(5);
+  addBubble('customerFeed', `Clicks <b>"Pay ₹6,000"</b> twice quickly`);
+  addBubble('systemFeed', 'Request #1 idempotency-key: PAY-829173', true, 'POST /api/payment/create');
+  log('Payment request #1 — key PAY-829173');
+  await sleep(500);
+  addBubble('systemFeed', 'Request #2 idempotency-key: PAY-829173', true, 'POST /api/payment/create');
+  log('Payment request #2 — same key detected', 'warn');
+  await sleep(700);
+  log('Request #1 → SUCCESS, booking created');
+  log('Request #2 → ALREADY_PROCESSED (no new booking)', 'warn');
+  addBubble('customerFeed', `Only one confirmation is shown — no double charge or duplicate booking.`);
+  setStep(5,'done'); setStep(6,'done'); setStep(7,'done');
+  document.getElementById('resultBanner').innerHTML = `
+    <div class="result-banner ok">
+      <div class="code">Transaction ID: PAY-829173 · ALREADY_PROCESSED</div>
+      <h4>Idempotency prevented a duplicate booking</h4>
+      <p>The second request with the same idempotency key was safely ignored.</p>
+    </div>`;
+}
+
+document.getElementById('btnRunWorkflow').addEventListener('click', ()=>runWorkflow());
+document.getElementById('btnResetWorkflow').addEventListener('click', resetWorkflow);
+document.getElementById('btnFailPayment').addEventListener('click', ()=>runWorkflow({failPayment:true}));
+document.getElementById('btnDupPayment').addEventListener('click', ()=>runWorkflow({duplicate:true}));
+
+/* webhook code panel */
+document.getElementById('webhookCode').innerHTML = `
+<span class="kw">POST</span> /api/payment/webhook
+{
+  <span class="str">"payment_id"</span>: <span class="str">"PAY-829173"</span>,
+  <span class="str">"amount"</span>: 6000,
+  <span class="str">"status"</span>: <span class="str">"SUCCESS"</span>,
+  <span class="str">"signature"</span>: <span class="str">"a91f...c2"</span>
+}
+
+<span class="cm"># backend handler</span>
+<span class="kw">def</span> <span class="fn">handle_webhook</span>(request):
+    <span class="kw">if</span> <span class="kw">not</span> verify_signature(request):
+        <span class="kw">return</span> HttpResponse(status=400)
+    <span class="kw">if</span> payment.amount != booking.total:
+        <span class="kw">return</span> HttpResponse(status=400)
+    confirm_booking(payment.booking_id)`;
+
+/* ========================================================================
+   5. CONCURRENCY LAB
+   ======================================================================== */
+const customers = ['Customer A','Customer B','Customer C','Customer D'];
+let raceMode = false; // false = correct (locking), true = broken (race condition)
+document.getElementById('raceSwitch').addEventListener('click', ()=>{
+  raceMode = !raceMode;
+  document.getElementById('raceSwitch').classList.toggle('on', raceMode);
+  document.getElementById('raceLabel').textContent = raceMode
+    ? 'Broken implementation — no locking (race condition)'
+    : 'Correct implementation — transaction + row lock';
+  renderConcInventory(3,0,0);
+  renderLanes();
+});
+
+function renderLanes(){
+  document.getElementById('lanes').innerHTML = customers.map((c,i)=>`
+    <div class="lane" id="lane${i}">
+      <div class="who">${c}</div>
+      <div class="arrow-track"><i class="fa-solid fa-paper-plane" id="lanePlane${i}"></i></div>
+      <div class="result" id="laneResult${i}">Waiting…</div>
+    </div>`).join('');
+}
+renderLanes();
+
+function renderConcInventory(avail, locked, booked){
+  const rooms = [
+    {n:101, s: avail>=1 && locked===0 ? 'avail' : (locked>0?'locked':'booked')},
+  ];
+  const total = 3;
+  let html = '';
+  for(let i=0;i<total;i++){
+    let state = 'avail', label='Available';
+    if(i < booked){ state='booked'; label='Booked'; }
+    else if(i < booked + locked){ state='locked'; label='Locked'; }
+    html += `<div class="inv-room ${state}"><div class="rn">Room 10${i+1}</div><div class="rs">${label}</div></div>`;
+  }
+  document.getElementById('concInv').innerHTML = html;
+}
+renderConcInventory(3,0,0);
+
+document.getElementById('btnRunConcurrency').addEventListener('click', runConcurrency);
+
+async function runConcurrency(){
+  renderLanes();
+  renderConcInventory(3,0,0);
+  const results = ['result0','result1','result2','result3'];
+  document.getElementById('raceExplain').innerHTML = `<div class="qa"><span class="q" style="color:var(--blue);">In progress</span> All four requests are arriving at the backend…</div>`;
+
+  // move planes toward server simultaneously
+  for(let i=0;i<4;i++){ document.getElementById('lanePlane'+i).style.left='90%'; }
+  await sleep(900);
+
+  if(!raceMode){
+    // CORRECT: deterministic sequential lock acquisition A,B,C then D rejected
+    renderConcInventory(3,1,0);
+    await sleep(500);
+    document.getElementById('laneResult0').textContent='Locked row → Room 101';
+    document.getElementById('laneResult0').classList.add('win');
+    renderConcInventory(3,0,1);
+    await sleep(500);
+    renderConcInventory(3,1,1);
+    document.getElementById('laneResult1').textContent='Locked row → Room 102';
+    document.getElementById('laneResult1').classList.add('win');
+    renderConcInventory(3,0,2);
+    await sleep(500);
+    renderConcInventory(3,1,2);
+    document.getElementById('laneResult2').textContent='Locked row → Room 103';
+    document.getElementById('laneResult2').classList.add('win');
+    renderConcInventory(3,0,3);
+    await sleep(500);
+    document.getElementById('laneResult3').textContent='HTTP 409 — no room left';
+    document.getElementById('laneResult3').classList.add('lose');
+    document.getElementById('raceExplain').innerHTML = `
+      <div class="qa"><span class="q" style="color:var(--blue);">What just happened?</span> Each request acquired a row lock one at a time via <b>select_for_update()</b>. A, B and C each got a distinct room and committed before the next request could read the row.</div>
+      <div class="qa"><span class="q" style="color:var(--blue);">Result</span> Exactly 3 bookings were created for 3 rooms. Customer D correctly received <b>HTTP 409 Conflict</b> — no overbooking.</div>`;
+  } else {
+    // BROKEN: all 4 read available=3 before anyone writes -> overbooking
+    document.getElementById('laneResult0').textContent='Read available_rooms = 3';
+    document.getElementById('laneResult1').textContent='Read available_rooms = 3';
+    document.getElementById('laneResult2').textContent='Read available_rooms = 3';
+    document.getElementById('laneResult3').textContent='Read available_rooms = 3';
+    await sleep(700);
+    for(let i=0;i<4;i++){
+      document.getElementById('laneResult'+i).textContent='Booking created ✓';
+      document.getElementById('laneResult'+i).classList.add('lose');
+    }
+    renderConcInventory(3,0,4); // will only render 3 slots — show overbooked state manually
+    document.getElementById('concInv').innerHTML += `<div class="inv-room booked" style="border-color:var(--red);background:var(--red-bg);color:var(--red);"><div class="rn">⚠ 4th booking</div><div class="rs">No room backing it</div></div>`;
+    document.getElementById('raceExplain').innerHTML = `
+      <div class="qa" style="color:var(--red);"><span class="q" style="color:var(--red);">Race condition detected</span> All four requests read the same "available_rooms = 3" before any of them wrote back. Every request believed a room was free.</div>
+      <div class="qa"><span class="q" style="color:var(--red);">Result</span> 4 bookings were created for 3 physical rooms — <b>overbooking</b>. This happens when reads and writes aren't wrapped in a locking transaction.</div>`;
+  }
+}
+
+/* ========================================================================
+   6. ERROR SCENARIOS
+   ======================================================================== */
+const ERRORS = [
+  {icon:'fa-calendar-xmark', title:'Invalid dates', code:'HTTP 400', flow:[
+    'Customer submits check-out before check-in',
+    'Backend validation runs before any DB query',
+    'Serializer rejects the payload',
+  ], result:'400 Bad Request — "Invalid booking dates"'},
+  {icon:'fa-door-closed', title:'Room unavailable', code:'HTTP 409', flow:[
+    'Customer clicks Reserve',
+    'Backend re-checks availability',
+    'available_rooms = 0 for the requested room',
+  ], result:'409 Conflict — "Room no longer available"'},
+  {icon:'fa-credit-card', title:'Payment failed', code:'HTTP 402', flow:[
+    'Payment gateway declines the card',
+    'Webhook reports status=FAILED',
+    'Backend cancels the hold, restores inventory',
+  ], result:'402 Payment Required — hold released, room re-listed'},
+  {icon:'fa-hourglass-half', title:'Payment timeout', code:'HTTP 408', flow:[
+    'Gateway does not respond within the timeout window',
+    'Hold timer continues to run independently',
+    'If the hold expires first, the room is released',
+  ], result:'408 Timeout — customer asked to retry payment'},
+  {icon:'fa-copy', title:'Duplicate payment', code:'200 OK', flow:[
+    'Two payment requests share the same idempotency key',
+    'Backend recognizes the key has already been processed',
+    'Second request is a no-op',
+  ], result:'Second request returns ALREADY_PROCESSED — no duplicate booking'},
+  {icon:'fa-server', title:'Server error', code:'HTTP 500', flow:[
+    'An unexpected exception occurs mid-transaction',
+    'Database transaction is rolled back automatically',
+    'No partial booking or inventory change is left behind',
+  ], result:'500 Internal Server Error — booking never created'},
+  {icon:'fa-database', title:'Database timeout', code:'HTTP 503', flow:[
+    'The database does not respond within the query timeout',
+    'The request fails safely without holding a lock indefinitely',
+    'Client is asked to retry',
+  ], result:'503 Service Unavailable — request safe to retry'},
+];
+document.getElementById('errGrid').innerHTML = ERRORS.map((e,i)=>`
+  <button class="err-btn" data-i="${i}"><i class="fa-solid ${e.icon}"></i> ${e.title}</button>`).join('');
+document.querySelectorAll('.err-btn').forEach(b=>b.addEventListener('click', e=>{
+  const err = ERRORS[+e.currentTarget.dataset.i];
+  const detail = document.getElementById('errDetail');
+  detail.classList.add('show');
+  detail.innerHTML = `
+    <div style="font-family:var(--mono);color:var(--amber);font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">${err.title.toUpperCase()} · ${err.code}</div>
+    <div class="err-flow">${err.flow.map(f=>`↓ ${f}`).join('<br>')}<br><span class="fin">↓ ${err.result}</span></div>`;
+  detail.scrollIntoView({behavior:'smooth', block:'nearest'});
+}));
+
+/* ========================================================================
+   7. STATE MACHINE
+   ======================================================================== */
+const STATES = [
+  {id:'AVAILABLE', desc:'The room is open for booking and appears in search results.'},
+  {id:'HELD', desc:'Temporarily reserved for one customer while they complete payment. Expires automatically if payment is not completed in time.'},
+  {id:'PAYMENT_PENDING', desc:'A payment request has been sent to the gateway; the backend is waiting for a verified webhook response.'},
+  {id:'CONFIRMED', desc:'Payment verified and booking committed to the database. Inventory is permanently decremented.'},
+];
+document.getElementById('smWrap').innerHTML = STATES.map((s,i)=>`
+  ${i>0?'<span class="sm-arrow"><i class="fa-solid fa-arrow-right"></i></span>':''}
+  <div class="sm-node" data-i="${i}">${s.id}</div>
+`).join('');
+document.querySelectorAll('.sm-node').forEach(n=>n.addEventListener('click', e=>{
+  document.querySelectorAll('.sm-node').forEach(x=>x.classList.remove('on'));
+  e.currentTarget.classList.add('on');
+  const s = STATES[+e.currentTarget.dataset.i];
+  document.getElementById('smDetail').innerHTML = `<b>${s.id}</b> — ${s.desc}`;
+}));
+document.getElementById('smWrap').insertAdjacentHTML('afterend', `
+  <div style="display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-top:6px;">
+    <div class="sm-fail">HELD → CANCELLED → AVAILABLE <div style="color:var(--ink-soft);font-weight:500;">(hold expires or payment declines)</div></div>
+    <div class="sm-fail">PAYMENT_PENDING → FAILED → AVAILABLE <div style="color:var(--ink-soft);font-weight:500;">(webhook reports failure)</div></div>
+  </div>`);
+
+/* ========================================================================
+   8. ARCHITECTURE
+   ======================================================================== */
+const ARCH = [
+  {icon:'fa-user', label:'Customer', desc:'Interacts with the StayFlow website in the browser.'},
+  {icon:'fa-display', label:'React Frontend', desc:'Renders the UI and sends REST requests to the API.'},
+  {icon:'fa-diagram-project', label:'Django REST API', desc:'Receives requests, orchestrates the booking workflow.'},
+  {icon:'fa-shield-check', label:'Validation Layer', desc:'Checks request shape and business rules before hitting the database.'},
+  {icon:'fa-briefcase', label:'Booking Service', desc:'Core business logic: availability, holds, confirmation.'},
+  {icon:'fa-database', label:'PostgreSQL', desc:'Source of truth for hotels, rooms, inventory and bookings.'},
+  {icon:'fa-warehouse', label:'Room Inventory', desc:'Per-date, per-room-type counts of available/held/booked rooms.'},
+  {icon:'fa-lock', label:'Transaction / Row Lock', desc:'Guarantees only one request can modify an inventory row at a time.'},
+  {icon:'fa-credit-card', label:'Payment Service', desc:'Creates payment intents and talks to the payment gateway.'},
+  {icon:'fa-satellite-dish', label:'Webhook', desc:'Gateway calls back with the verified payment outcome.'},
+  {icon:'fa-circle-check', label:'Booking Confirmation', desc:'Booking is committed and a booking ID is generated.'},
+  {icon:'fa-envelope', label:'Email / SMS', desc:'Notification is queued and delivered independently of the transaction.'},
+];
+document.getElementById('archList').innerHTML = ARCH.map((a,i)=>`
+  <div class="arch-node" data-i="${i}"><i class="fa-solid ${a.icon}"></i> ${a.label}</div>
+  <div class="arch-detail" id="archDetail${i}">${a.desc}</div>
+  ${i<ARCH.length-1?'<div class="arch-arrow"><i class="fa-solid fa-chevron-down"></i></div>':''}
+`).join('');
+document.querySelectorAll('.arch-node').forEach(n=>n.addEventListener('click', e=>{
+  const i = e.currentTarget.dataset.i;
+  document.getElementById('archDetail'+i).classList.toggle('show');
+}));
+
+/* ========================================================================
+   9. GUIDED DEMO
+   ======================================================================== */
+document.getElementById('btnGuidedDemo').addEventListener('click', guidedDemo);
+async function guidedDemo(){
+  document.getElementById('btnGuidedDemo').setAttribute('disabled','true');
+  window.scrollTo({top:0, behavior:'smooth'});
+  await sleep(600);
+  if(document.getElementById('resultsSection').classList.contains('hidden')){
+    await runSearch();
+  }
+  await sleep(1200);
+  selectHotel(HOTELS[0]);
+  await sleep(1400);
+  show('workflowSection'); show('webhookSection');
+  document.getElementById('workflowSection').scrollIntoView({behavior:'smooth'});
+  await sleep(700);
+  await runWorkflow();
+  await sleep(1500);
+  document.getElementById('concurrencySection').scrollIntoView({behavior:'smooth'});
+  await sleep(900);
+  if(raceMode){ document.getElementById('raceSwitch').click(); await sleep(400); }
+  await runConcurrency();
+  await sleep(2200);
+  document.getElementById('takeawaySection').scrollIntoView({behavior:'smooth'});
+  document.getElementById('btnGuidedDemo').removeAttribute('disabled');
+}
+</script>
+</body>
+</html>
